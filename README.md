@@ -1,4 +1,4 @@
 # PHP-MySQL
  
 <p>1. Insert data into database</p>
-<img src="Insert-Data.png">
+<img src="Insert_Data.png">
