@@ -8,3 +8,6 @@
 
 <h4><center>3. Update data from database</center></h4>
 <img src="Update_data.png">
+
+<h4><center>4. Delete data from database</center></h4>
+<img src="delete_data.png">
