@@ -2,6 +2,8 @@
 
 > PHP-MySQL crud operations using MySQLi
 
-![create_data](/screenshots/create_data.png)
+![display data](/screenshots/display_data.png)
 
-![display_data](/screenshots/display_data.png)
+![create data](/screenshots/create_data.png)
+
+![update data](/screenshots/update_data.png)
