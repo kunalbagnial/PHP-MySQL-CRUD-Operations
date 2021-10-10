@@ -1,0 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+table>tbody>tr>td {
+    vertical-align: middle;
+}
+
+h3 {
+    font-size: 26px;
+    font-weight: 600;
+}
