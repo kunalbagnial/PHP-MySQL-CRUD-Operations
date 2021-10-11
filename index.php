@@ -41,9 +41,10 @@
 
                 if ($records > 0) {
                     $row = mysqli_fetch_all($result, MYSQLI_ASSOC);
+                    $count = 1;
                     foreach ($row as $row) { ?>
                         <tr>
-                            <td><?= $row["id"]; ?></td>
+                            <td><?= $count++; ?></td>
                             <td><?= $row["firstname"]; ?></td>
                             <td><?= $row["lastname"]; ?></td>
                             <td><?= $row["email"]; ?></td>

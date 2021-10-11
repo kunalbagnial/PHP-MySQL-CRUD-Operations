@@ -3,7 +3,7 @@
 include 'db_connection.php';
 
 // processing form data when form is submit
-if (isset($_POST["update"])) {
+if (isset($_POST["id"]) && !empty($_POST["id"])) {
     // get post values
     $id = $_POST["id"];
     $fname = $_POST["fname"];
@@ -18,15 +18,15 @@ if (isset($_POST["update"])) {
 
     if (mysqli_query($conn, $sql)) {
         echo "<script>alert('Record updated Successfully');</script>";
-        echo "<script>document.location='index.php';</script>";
-        exit;
+        echo "<script>window.location.href='http://localhost/PHP-MySQL/';</script>";
+        exit();
     }
 }
 
 // check if url contain id, if not redirect to index page
 if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
     // get id from url
-    $id = $_GET["id"];
+    $id = trim($_GET["id"]);
 
     // retrieve record associated with id
     $sql = "SELECT * FROM students WHERE id = '$id'";
@@ -46,8 +46,8 @@ if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
     }
 } else {
     echo "<script>alert('Please select record to update');</script>";
-    echo "<script>document.location='index.php';</script>";
-    exit;
+    echo "<script>window.location.href='http://localhost/PHP-MySQL/';</script>";
+    exit();
 }
 ?>
 
@@ -70,7 +70,7 @@ if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
             <div class="col-lg-7">
                 <h3 class="mb-4 text-center">Update Record</h3>
                 <div class="form-body bg-light p-4">
-                    <form action="<?= $_SERVER["REQUEST_URI"]; ?>" method="POST">
+                    <form action="<?= htmlspecialchars(basename($_SERVER["REQUEST_URI"])); ?>" method="POST">
                         <div class="row">
                             <div class="col-lg-6 mb-3">
                                 <label for="fname" class="form-label">Firstname*</label>
