@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 10, 2021 at 08:04 AM
+-- Generation Time: Oct 18, 2021 at 02:04 PM
 -- Server version: 10.4.21-MariaDB
 -- PHP Version: 7.4.24
 
@@ -44,14 +44,15 @@ CREATE TABLE `students` (
 
 INSERT INTO `students` (`id`, `firstname`, `lastname`, `email`, `course`, `batch`, `city`, `state`) VALUES
 (1, 'ashish', 'raturi', 'ashishraturi@gmail.com', 'bca', 2013, 'dehradun', 'uttarakhand'),
-(2, 'sumit', 'arora', 'sumitarora@gmail.com', 'mca', 2013, 'ludhiana', 'punjab'),
+(2, 'sumit', 'arora', 'sumitarora@gmail.com', 'bca', 2013, 'ludhiana', 'punjab'),
 (3, 'raghav', 'gupta', 'raghavgupta@gmail.com', 'bca', 2014, 'jalandhar', 'punjab'),
 (4, 'vinita', 'kansal', 'vinitakansal@gmail.com', 'mca', 2015, 'gurugram', 'haryana'),
-(5, 'neha', 'bansal', 'nehabansal@gmail.com', 'pgdca', 2015, 'rohtak', 'haryana'),
-(16, 'jaspreet', 'kaur', 'kaur.jaspreet@gmail.com', 'pgdca', 2016, 'mohali', 'punjab'),
 (18, 'tanya', 'bansal', 'tanyabansal@gmail.com', 'pgdca', 2017, 'ludhiana', 'punjab'),
-(19, 'jagdeep', 'arora', 'jagdeeparora@gmail.com', 'mca', 2018, 'panchkula', 'haryana'),
-(20, 'kushal', 'dubey', 'kdubey123@yahoo.com', 'mca', 2018, 'muzzaffarpur', 'bihar');
+(24, 'jagdeep', 'sehgal', 'js8995@yahoo.com', 'bca', 2016, 'mohali', 'punjab'),
+(27, 'arzoo', 'mehta', 'arzoomehta@yahoo.com', 'pgdca', 2018, 'ambala', 'haryana'),
+(28, 'bhumika', 'mishra', 'bm7894@yahoo.com', 'pgdca', 2021, 'dehradun', 'uttarakhand'),
+(31, 'keshav', 'yadav', 'ky21594@yahoo.com', 'mca', 2020, 'patna', 'bihar'),
+(32, 'surinder', 'chawla', 'surinder.c94@gmail.com', 'mca', 2019, 'patiala', 'punjab');
 
 --
 -- Indexes for dumped tables
@@ -71,7 +72,7 @@ ALTER TABLE `students`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

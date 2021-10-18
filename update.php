@@ -2,52 +2,108 @@
 // include connection
 include 'db_connection.php';
 
+// define variables and initialize with empty values
+$fnameErr = $lnameErr = $emailErr = $courseErr = $batchErr = $cityErr = $stateErr = "";
+$fname = $lname = $email = $course = $batch = $city = $state = "";
+
 // processing form data when form is submit
 if (isset($_POST["id"]) && !empty($_POST["id"])) {
-    // get post values
+    // get hidden id input value
     $id = $_POST["id"];
-    $fname = $_POST["fname"];
-    $lname = $_POST["lname"];
-    $email = $_POST["email"];
-    $course = $_POST["course"];
-    $batch = $_POST["batch"];
-    $city = $_POST["city"];
-    $state = $_POST["state"];
 
-    $sql = "UPDATE students SET firstname='$fname', lastname='$lname', email='$email', course='$course', batch='$batch', city='$city', state='$state' WHERE id='$id'";
+    if (empty($_POST["fname"])) {
+        $fnameErr = "*This field is required";
+    } else {
+        $fname = trim($_POST["fname"]);
+    }
 
-    if (mysqli_query($conn, $sql)) {
-        echo "<script>alert('Record updated Successfully');</script>";
+    if (empty($_POST["lname"])) {
+        $lnameErr = "*This field is required";
+    } else {
+        $lname = trim($_POST["lname"]);
+    }
+
+    if (empty($_POST["email"])) {
+        $emailErr = "*This field is required";
+    } else {
+        $email = trim($_POST["email"]);
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $emailErr = "Invalid email address";
+        }
+    }
+
+    if (empty($_POST["course"])) {
+        $courseErr = "*This field is required";
+    } else {
+        $course = trim($_POST["course"]);
+    }
+
+    if (empty($_POST["batch"])) {
+        $batchErr = "*This field is required";
+    } else {
+        $batch = trim($_POST["batch"]);
+        if ($batch < 2013) {
+            $batchErr = "Value must be greater than or equal to 2013";
+        }
+        if ($batch > 2021) {
+            $batchErr = "Value must be less than or equal to 2021";
+        }
+    }
+
+    if (empty($_POST["city"])) {
+        $cityErr = "*This field is required";
+    } else {
+        $city = trim($_POST["city"]);
+    }
+
+    if (empty($_POST["state"])) {
+        $stateErr = "*This field is required";
+    } else {
+        $state = trim($_POST["state"]);
+    }
+
+    // update data if no errors found
+    if (empty($fnameErr) && empty($lnameErr) && empty($emailErr) && empty($courseErr) && empty($batchErr) && empty($cityErr) && empty($stateErr)) {
+
+        $sql = "UPDATE students SET firstname='$fname', lastname='$lname', email='$email', course='$course', batch='$batch', city='$city', state='$state' WHERE id='$id'";
+
+        if (mysqli_query($conn, $sql)) {
+            echo "<script>alert('Record updated Successfully');</script>";
+            echo "<script>window.location.href='http://localhost/PHP-MySQL/';</script>";
+            exit();
+        }
+    }
+    // close connection
+    mysqli_close($conn);
+} else {
+    // check if url contain id, if not redirect to index page
+    if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
+        // get id from url
+        $id = trim($_GET["id"]);
+
+        // retrieve record associated with id
+        $sql = "SELECT * FROM students WHERE id = '$id'";
+        $result = mysqli_query($conn, $sql);
+        $record = mysqli_num_rows($result);
+
+        if ($record == 1) {
+            $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+            // retrieve individual field value
+            $fname = $row["firstname"];
+            $lname = $row["lastname"];
+            $email = $row["email"];
+            $course = $row["course"];
+            $batch = $row["batch"];
+            $city = $row["city"];
+            $state = $row["state"];
+        }
+        // close connection
+        mysqli_close($conn);
+    } else {
+        echo "<script>alert('Please select record to update');</script>";
         echo "<script>window.location.href='http://localhost/PHP-MySQL/';</script>";
         exit();
     }
-}
-
-// check if url contain id, if not redirect to index page
-if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
-    // get id from url
-    $id = trim($_GET["id"]);
-
-    // retrieve record associated with id
-    $sql = "SELECT * FROM students WHERE id = '$id'";
-    $result = mysqli_query($conn, $sql);
-    $record = mysqli_num_rows($result);
-
-    if ($record == 1) {
-        $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
-        // retrieve individual field value
-        $fname = $row["firstname"];
-        $lname = $row["lastname"];
-        $email = $row["email"];
-        $course = $row["course"];
-        $batch = $row["batch"];
-        $city = $row["city"];
-        $state = $row["state"];
-    }
-} else {
-    echo "<script>alert('Please select record to update');</script>";
-    echo "<script>window.location.href='http://localhost/PHP-MySQL/';</script>";
-    exit();
 }
 ?>
 
@@ -74,7 +130,8 @@ if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
                         <div class="row">
                             <div class="col-lg-6 mb-3">
                                 <label for="fname" class="form-label">Firstname*</label>
-                                <input type="text" class="form-control" id="fname" name="fname" value="<?= $fname; ?>" required>
+                                <input type="text" class="form-control" id="fname" name="fname" value="<?= $fname; ?>">
+                                <small class="text-danger"><?= $fnameErr; ?></small>
                             </div>
                             <div class="col-lg-6 mb-3">
                                 <label for="lname" class="form-label">Lastname*</label>
@@ -82,25 +139,30 @@ if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
                             </div>
                             <div class="col-lg-12 mb-3">
                                 <label for="email" class="form-label">Email Address*</label>
-                                <input type="email" class="form-control" id="email" name="email" value="<?= $email; ?>" required>
+                                <input type="email" class="form-control" id="email" name="email" value="<?= $email; ?>">
+                                <small class="text-danger"><?= $emailErr; ?></small>
                             </div>
                             <div class="col-lg-6 mb-3">
                                 <label for="course" class="form-label">Course*</label>
-                                <input type="text" class="form-control" id="course" name="course" value="<?= $course; ?>" required>
+                                <input type="text" class="form-control" id="course" name="course" value="<?= $course; ?>">
+                                <small class="text-danger"><?= $courseErr; ?></small>
                             </div>
                             <div class="col-lg-6 mb-3">
                                 <label for="batch" class="form-label">Batch*</label>
-                                <input type="number" class="form-control" id="batch" name="batch" value="<?= $batch; ?>" min="2013" max="2021" required>
+                                <input type="number" class="form-control" id="batch" name="batch" value="<?= $batch; ?>">
+                                <small class="text-danger"><?= $batchErr; ?></small>
                             </div>
                             <div class="col-lg-6 mb-3">
                                 <label for="city" class="form-label">City*</label>
-                                <input type="text" class="form-control" id="city" name="city" value="<?= $city; ?>" required>
+                                <input type="text" class="form-control" id="city" name="city" value="<?= $city; ?>">
+                                <small class="text-danger"><?= $cityErr; ?></small>
                             </div>
                             <div class="col-lg-6 mb-4">
                                 <label for="state" class="form-label">State*</label>
-                                <input type="text" class="form-control" id="state" name="state" value="<?= $state; ?>" required>
+                                <input type="text" class="form-control" id="state" name="state" value="<?= $state; ?>">
+                                <small class="text-danger"><?= $stateErr; ?></small>
                             </div>
-                            <div class="col-lg-12">
+                            <div class=" col-lg-12">
                                 <input type="hidden" class="form-control" name="id" value="<?= $id; ?>">
                                 <input type="submit" class="btn btn-secondary form-control" name="update" value="Update">
                             </div>

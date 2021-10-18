@@ -1,3 +1,87 @@
+<?php
+// include connection
+include 'db_connection.php';
+
+// declare varibales and initialize with empty values
+$fnameErr = $lnameErr = $emailErr = $courseErr = $batchErr = $cityErr = $stateErr = "";
+$fname = $lname = $email = $course = $batch = $city = $state = "";
+
+// processing form data when form is submit
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (empty($_POST["fname"])) {
+        $fnameErr = "*This field is required";
+    } else {
+        $fname = test_input($_POST["fname"]);
+    }
+
+    if (empty($_POST["lname"])) {
+        $lnameErr = "This field is required";
+    } else {
+        $lname = test_input($_POST["lname"]);
+    }
+
+    if (empty($_POST["email"])) {
+        $emailErr = "*This field is required";
+    } else {
+        $email = test_input($_POST["email"]);
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $emailErr = "Invalid email address";
+        }
+    }
+
+    if (empty($_POST["course"])) {
+        $courseErr = "*This field is required";
+    } else {
+        $course = test_input($_POST["course"]);
+    }
+
+    if (empty($_POST["batch"])) {
+        $batchErr = "*This field is required";
+    } else {
+        $batch = test_input($_POST["batch"]);
+        if ($batch < 2013) {
+            $batchErr = "Value must be greater than or equal to 2013";
+        }
+        if ($batch > 2021) {
+            $batchErr = "Value must be less than or equal to 2021";
+        }
+    }
+
+    if (empty($_POST["city"])) {
+        $cityErr = "*This field is required";
+    } else {
+        $city = test_input($_POST["city"]);
+    }
+
+    if (empty($_POST["state"])) {
+        $stateErr = "*This field is required";
+    } else {
+        $state = test_input($_POST["state"]);
+    }
+
+    // if no errors then insert data into databse
+    if (empty($fnameErr) && empty($lnameErr) && empty($emailErr) && empty($courseErr) && empty($batchErr) && empty($cityErr) && empty($stateErr)) {
+
+        $sql = "INSERT INTO students (firstname, lastname, email, course, batch, city, state) VALUES ('$fname', '$lname', '$email', '$course', '$batch' , '$city', '$state')";
+
+        if (mysqli_query($conn, $sql)) {
+            echo "<script>alert('New record created successfully');</script>";
+            echo "<script>window.location.href='http://localhost/PHP-MySQL/';</script>";
+            exit();
+        }
+    }
+    mysqli_close($conn);
+}
+
+function test_input($data)
+{
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,89 +95,6 @@
 </head>
 
 <body>
-    <?php
-    // include connection
-    include 'db_connection.php';
-
-    // declare varibales and initialize with empty values
-    $fnameErr = $lnameErr = $emailErr = $courseErr = $batchErr = $cityErr = $stateErr = "";
-    $fname = $lname = $email = $course = $batch = $city = $state = "";
-
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        if (empty($_POST["fname"])) {
-            $fnameErr = "*This field is required";
-        } else {
-            $fname = test_input($_POST["fname"]);
-        }
-
-        if (empty($_POST["lname"])) {
-            $lnameErr = "This field is required";
-        } else {
-            $lname = test_input($_POST["lname"]);
-        }
-
-        if (empty($_POST["email"])) {
-            $emailErr = "*This field is required";
-        } else {
-            $email = test_input($_POST["email"]);
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $emailErr = "Invalid email address";
-            }
-        }
-
-        if (empty($_POST["course"])) {
-            $courseErr = "*This field is required";
-        } else {
-            $course = test_input($_POST["course"]);
-        }
-
-        if (empty($_POST["batch"])) {
-            $batchErr = "*This field is required";
-        } else {
-            $batch = test_input($_POST["batch"]);
-            if ($batch < 2013) {
-                $batchErr = "Value must be greater than or equal to 2013";
-            }
-            if ($batch > 2021) {
-                $batchErr = "Value must be less than or equal to 2021";
-            }
-        }
-
-        if (empty($_POST["city"])) {
-            $cityErr = "*This field is required";
-        } else {
-            $city = test_input($_POST["city"]);
-        }
-
-        if (empty($_POST["state"])) {
-            $stateErr = "*This field is required";
-        } else {
-            $state = test_input($_POST["state"]);
-        }
-
-        // if no errors then insert data into databse
-        if (empty($fnameErr) && empty($lnameErr) && empty($emailErr) && empty($courseErr) && empty($batchErr) && empty($cityErr) && empty($stateErr)) {
-
-            $sql = "INSERT INTO students (firstname, lastname, email, course, batch, city, state) VALUES ('$fname', '$lname', '$email', '$course', '$batch' , '$city', '$state')";
-
-            if (mysqli_query($conn, $sql)) {
-                echo "<script>alert('New record created successfully');</script>";
-                echo "<script>window.location.href='http://localhost/crud/';</script>";
-                exit();
-            }
-        }
-    }
-
-    function test_input($data)
-    {
-        $data = trim($data);
-        $data = stripslashes($data);
-        $data = htmlspecialchars($data);
-        return $data;
-    }
-    ?>
-
-
     <!-- submit form -->
     <div class="container mt-5">
         <div class="row justify-content-center">

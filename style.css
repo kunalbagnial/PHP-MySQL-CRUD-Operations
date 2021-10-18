@@ -1,14 +1,19 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 
 body {
-    font-family: 'Roboto', sans-serif;
+    font-size: 15px;
+    font-family: 'Poppins', sans-serif;
 }
 
 table>tbody>tr>td {
     vertical-align: middle;
 }
 
+.btn,.form-control {
+    font-size: 15px;
+}
+
 h3 {
     font-size: 26px;
-    font-weight: 600;
+    font-weight: 700;
 }
