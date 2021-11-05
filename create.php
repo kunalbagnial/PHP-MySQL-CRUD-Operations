@@ -12,18 +12,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $fnameErr = "*This field is required";
     } else {
         $fname = test_input($_POST["fname"]);
+        // check if fname contains only letters
+        if (!ctype_alpha($fname)) {
+            $fnameErr = "Only letters are allowed";
+        }
     }
 
     if (empty($_POST["lname"])) {
         $lnameErr = "This field is required";
     } else {
         $lname = test_input($_POST["lname"]);
+        // check if lname contains only letters
+        if (!ctype_alpha($lname)) {
+            $lnameErr = "Only letters are allowed";
+        }
     }
 
     if (empty($_POST["email"])) {
         $emailErr = "*This field is required";
     } else {
         $email = test_input($_POST["email"]);
+        // check e-mail address is valid
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $emailErr = "Invalid email address";
         }
@@ -39,11 +48,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $batchErr = "*This field is required";
     } else {
         $batch = test_input($_POST["batch"]);
-        if ($batch < 2013) {
-            $batchErr = "Value must be greater than or equal to 2013";
-        }
-        if ($batch > 2021) {
-            $batchErr = "Value must be less than or equal to 2021";
+        /* check if batch contains numbers only, also 
+        check min and max value to be entered */
+        if (!ctype_digit($batch)) {
+            $batchErr = "Batch must be a numeric value";
+        } elseif ($batch < 2013) {
+            $batchErr = "Batch must be greater than or equal to 2013";
+        } elseif ($batch > 2021) {
+            $batchErr = "Batch must be less than or equal to 2021";
+        } else {
+            // no code will execute
         }
     }
 
@@ -89,7 +103,7 @@ function test_input($data)
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-uWxY/CJNBR+1zjPWmfnSnVxwRheevXITnMqoEIeG1LJrdI0GlVs/9cVSyPYXdcSF" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="style.css" rel="stylesheet">
     <title>Create Data - PHP CRUD</title>
 </head>
@@ -125,7 +139,7 @@ function test_input($data)
                             </div>
                             <div class="col-lg-6 mb-3">
                                 <label for="batch" class="form-label">Batch*</label>
-                                <input type="number" class="form-control" id="batch" name="batch" value="<?= $batch; ?>">
+                                <input type="text" class="form-control" id="batch" name="batch" value="<?= $batch; ?>">
                                 <small class="text-danger"><?= $batchErr; ?></small>
                             </div>
                             <div class="col-lg-6 mb-3">

@@ -15,18 +15,27 @@ if (isset($_POST["id"]) && !empty($_POST["id"])) {
         $fnameErr = "*This field is required";
     } else {
         $fname = trim($_POST["fname"]);
+        // check if fname contains only letters
+        if (!ctype_alpha($fname)) {
+            $fnameErr = "Only letters are allowed";
+        }
     }
 
     if (empty($_POST["lname"])) {
         $lnameErr = "*This field is required";
     } else {
         $lname = trim($_POST["lname"]);
+        // check if lname contains only letters
+        if (!ctype_alpha($lname)) {
+            $lnameErr = "Only letters are allowed";
+        }
     }
 
     if (empty($_POST["email"])) {
         $emailErr = "*This field is required";
     } else {
         $email = trim($_POST["email"]);
+        // check if e-mail address is valid
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $emailErr = "Invalid email address";
         }
@@ -42,11 +51,16 @@ if (isset($_POST["id"]) && !empty($_POST["id"])) {
         $batchErr = "*This field is required";
     } else {
         $batch = trim($_POST["batch"]);
-        if ($batch < 2013) {
-            $batchErr = "Value must be greater than or equal to 2013";
-        }
-        if ($batch > 2021) {
-            $batchErr = "Value must be less than or equal to 2021";
+        /* check if batch contains numbers only, also 
+        check min and max value to be entered */
+        if (!ctype_digit($batch)) {
+            $batchErr = "Batch must be a numeric value";
+        } elseif ($batch < 2013) {
+            $batchErr = "Batch must be greater than or equal to 2013";
+        } elseif ($batch > 2021) {
+            $batchErr = "Batch must be less than or equal to 2021";
+        } else {
+            // no code will execute
         }
     }
 
@@ -62,7 +76,7 @@ if (isset($_POST["id"]) && !empty($_POST["id"])) {
         $state = trim($_POST["state"]);
     }
 
-    // update data if no errors found
+    // update record if no errors found
     if (empty($fnameErr) && empty($lnameErr) && empty($emailErr) && empty($courseErr) && empty($batchErr) && empty($cityErr) && empty($stateErr)) {
 
         $sql = "UPDATE students SET firstname='$fname', lastname='$lname', email='$email', course='$course', batch='$batch', city='$city', state='$state' WHERE id='$id'";
@@ -114,7 +128,7 @@ if (isset($_POST["id"]) && !empty($_POST["id"])) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-uWxY/CJNBR+1zjPWmfnSnVxwRheevXITnMqoEIeG1LJrdI0GlVs/9cVSyPYXdcSF" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="style.css" rel="stylesheet">
     <title>Update Data - PHP CRUD</title>
 </head>
@@ -135,7 +149,8 @@ if (isset($_POST["id"]) && !empty($_POST["id"])) {
                             </div>
                             <div class="col-lg-6 mb-3">
                                 <label for="lname" class="form-label">Lastname*</label>
-                                <input type="text" class="form-control" id="lname" name="lname" value="<?= $lname; ?>" required>
+                                <input type="text" class="form-control" id="lname" name="lname" value="<?= $lname; ?>">
+                                <small class="text-danger"><?= $lnameErr; ?></small>
                             </div>
                             <div class="col-lg-12 mb-3">
                                 <label for="email" class="form-label">Email Address*</label>
@@ -149,7 +164,7 @@ if (isset($_POST["id"]) && !empty($_POST["id"])) {
                             </div>
                             <div class="col-lg-6 mb-3">
                                 <label for="batch" class="form-label">Batch*</label>
-                                <input type="number" class="form-control" id="batch" name="batch" value="<?= $batch; ?>">
+                                <input type="text" class="form-control" id="batch" name="batch" value="<?= $batch; ?>">
                                 <small class="text-danger"><?= $batchErr; ?></small>
                             </div>
                             <div class="col-lg-6 mb-3">
