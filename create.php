@@ -1,98 +1,87 @@
 <?php
-// include connection
-include 'db_connection.php';
+require_once "config.php";
 
-// declare varibales and initialize with empty values
-$fnameErr = $lnameErr = $emailErr = $courseErr = $batchErr = $cityErr = $stateErr = "";
-$fname = $lname = $email = $course = $batch = $city = $state = "";
+// Define variables and initialize with empty values
+$fname_err = $lname_err = $email_err = $course_err = $batch_err = $city_err = $state_err = "";
+$firstname = $lastname = $email = $course = $batch = $city = $state = "";
 
-// processing form data when form is submit
+// Processing input data when form is submit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (empty($_POST["fname"])) {
-        $fnameErr = "*This field is required";
-    } else {
-        $fname = test_input($_POST["fname"]);
-        // check if fname contains only letters
-        if (!ctype_alpha($fname)) {
-            $fnameErr = "Only letters are allowed";
-        }
+  if (empty($_POST["fname"])) {
+    $fname_err = "This field is required*";
+  } else {
+    $firstname = trim($_POST["fname"]);
+    if (!ctype_alpha($firstname)) {
+      $fname_err = "Only letters are allowed";
     }
+  }
 
-    if (empty($_POST["lname"])) {
-        $lnameErr = "This field is required";
-    } else {
-        $lname = test_input($_POST["lname"]);
-        // check if lname contains only letters
-        if (!ctype_alpha($lname)) {
-            $lnameErr = "Only letters are allowed";
-        }
+  if (empty($_POST["lname"])) {
+    $lname_err = "This field is required*";
+  } else {
+    $lastname = trim($_POST["lname"]);
+    if (!ctype_alnum($lastname)) {
+      $lname_err = "Only letters are allowed";
     }
+  }
 
-    if (empty($_POST["email"])) {
-        $emailErr = "*This field is required";
-    } else {
-        $email = test_input($_POST["email"]);
-        // check e-mail address is valid
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $emailErr = "Invalid email address";
-        }
+  if (empty($_POST["email"])) {
+    $email_err = "This field is required*";
+  } else {
+    $email = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+      $email_err = "Please enter a valid email address";
     }
+  }
 
-    if (empty($_POST["course"])) {
-        $courseErr = "*This field is required";
-    } else {
-        $course = test_input($_POST["course"]);
+  if (empty($_POST["course"])) {
+    $course_err = "This field is required*";
+  } else {
+    $course = trim($_POST["course"]);
+  }
+
+  if (empty($_POST["batch"])) {
+    $batch_err = "This field is required*";
+  } else {
+    $batch = trim($_POST["batch"]);
+  }
+
+  if (empty($_POST["city"])) {
+    $city_err = "This field is required*";
+  } else {
+    $city = trim($_POST["city"]);
+  }
+
+  if (empty($_POST["state"])) {
+    $state_err = "This field is required*";
+  } else {
+    $state = trim($_POST["state"]);
+  }
+
+  // Check input errors before inserting data into database
+  if (empty($fname_err) && empty($lname_err) && empty($email_err) && empty($course_err) && empty($city_err) && empty($state_err)) {
+
+    // Prepare an insert statement
+    $sql = "INSERT INTO students (firstname, lastname, email, course, batch, city, state) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+    if ($stmt = mysqli_prepare($link, $sql)) {
+      // Bind variables to a prepared statement as parameters
+      mysqli_stmt_bind_param($stmt, "ssssiss", $firstname, $lastname, $email, $course, $batch, $city, $state);
+
+      // Execute the statement
+      if (mysqli_stmt_execute($stmt)) {
+        echo "<script>alert('New record created successfully')</script>";
+        echo "<script>window.location.href='http://localhost/php_crud/';</script>";
+        exit;
+      } else {
+        echo "Oops! Something went wrong. Please try again later";
+      }
     }
-
-    if (empty($_POST["batch"])) {
-        $batchErr = "*This field is required";
-    } else {
-        $batch = test_input($_POST["batch"]);
-        /* check if batch contains numbers only, also 
-        check min and max value to be entered */
-        if (!ctype_digit($batch)) {
-            $batchErr = "Batch must be a numeric value";
-        } elseif ($batch < 2013) {
-            $batchErr = "Batch must be greater than or equal to 2013";
-        } elseif ($batch > 2021) {
-            $batchErr = "Batch must be less than or equal to 2021";
-        } else {
-            // no code will execute
-        }
-    }
-
-    if (empty($_POST["city"])) {
-        $cityErr = "*This field is required";
-    } else {
-        $city = test_input($_POST["city"]);
-    }
-
-    if (empty($_POST["state"])) {
-        $stateErr = "*This field is required";
-    } else {
-        $state = test_input($_POST["state"]);
-    }
-
-    // if no errors then insert data into databse
-    if (empty($fnameErr) && empty($lnameErr) && empty($emailErr) && empty($courseErr) && empty($batchErr) && empty($cityErr) && empty($stateErr)) {
-
-        $sql = "INSERT INTO students (firstname, lastname, email, course, batch, city, state) VALUES ('$fname', '$lname', '$email', '$course', '$batch' , '$city', '$state')";
-
-        if (mysqli_query($conn, $sql)) {
-            echo "<script>alert('New record created successfully');</script>";
-            echo "<script>window.location.href='http://localhost/PHP-MySQL/';</script>";
-            exit();
-        }
-    }
-    mysqli_close($conn);
-}
-
-function test_input($data)
-{
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data);
-    return $data;
+    // Close statement
+    mysqli_stmt_close($stmt);
+  }
+  // Close connection
+  mysqli_close($link);
 }
 ?>
 
@@ -100,67 +89,73 @@ function test_input($data)
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    <link href="style.css" rel="stylesheet">
-    <title>Create Data - PHP CRUD</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Data - PHP CRUD Application</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <!-- custom css -->
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <!-- submit form -->
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-7">
-                <h3 class="mb-4 text-center">Create Record</h3>
-                <div class="form-body bg-light p-4">
-                    <form action="<?= htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
-                        <div class="row">
-                            <div class="col-lg-6 mb-3">
-                                <label for="fname" class="form-label">Firstname*</label>
-                                <input type="text" class="form-control" id="fname" name="fname" value="<?= $fname; ?>">
-                                <small class="text-danger"><?= $fnameErr; ?></small>
-                            </div>
-                            <div class="col-lg-6 mb-3">
-                                <label for="lname" class="form-label">Lastname*</label>
-                                <input type="text" class="form-control" id="lname" name="lname" value="<?= $lname; ?>">
-                                <small class="text-danger"><?= $lnameErr; ?></small>
-                            </div>
-                            <div class="col-lg-12 mb-3">
-                                <label for="email" class="form-label">Email Address*</label>
-                                <input type="email" class="form-control" id="email" name="email" value="<?= $email; ?>">
-                                <small class="text-danger"><?= $emailErr; ?></small>
-                            </div>
-                            <div class="col-lg-6 mb-3">
-                                <label for="course" class="form-label">Course*</label>
-                                <input type="text" class="form-control" id="course" name="course" value="<?= $course; ?>">
-                                <small class="text-danger"><?= $courseErr; ?></small>
-                            </div>
-                            <div class="col-lg-6 mb-3">
-                                <label for="batch" class="form-label">Batch*</label>
-                                <input type="text" class="form-control" id="batch" name="batch" value="<?= $batch; ?>">
-                                <small class="text-danger"><?= $batchErr; ?></small>
-                            </div>
-                            <div class="col-lg-6 mb-3">
-                                <label for="city" class="form-label">City*</label>
-                                <input type="text" class="form-control" id="city" name="city" value="<?= $city; ?>">
-                                <small class="text-danger"><?= $cityErr; ?></small>
-                            </div>
-                            <div class="col-lg-6 mb-4">
-                                <label for="state" class="form-label">State*</label>
-                                <input type="text" class="form-control" id="state" name="state" value="<?= $state; ?>">
-                                <small class="text-danger"><?= $stateErr; ?></small>
-                            </div>
-                            <div class="col-lg-12">
-                                <input type="submit" class="btn btn-primary form-control" name="submit" value="Submit">
-                            </div>
-                        </div>
-                    </form>
-                </div>
+  <div class="container">
+    <div class="row justify-content-center pt-5">
+      <div class="col-lg-6">
+        <!-- form start -->
+        <form action="<?= htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" class="bg-light p-4 shadow-sm" novalidate>
+          <div class="row">
+            <div class="col-lg-6 mb-3">
+              <label for="fname" class="form-label">Firstname</label>
+              <input type="text" name="fname" class="form-control" id="fname" value="<?= $firstname; ?>">
+              <small class="text-danger"><?= $fname_err; ?></small>
             </div>
-        </div>
+
+            <div class="col-lg-6 mb-3">
+              <label for="lname" class="form-label">Lastname</label>
+              <input type="text" name="lname" class="form-control" id="lname" value="<?= $lastname; ?>">
+              <small class="text-danger"><?= $lname_err; ?></small>
+            </div>
+
+            <div class="col-lg-12 mb-3">
+              <label for="email" class="form-label">Email Address</label>
+              <input type="email" name="email" class="form-control" id="email" value="<?= $email; ?>">
+              <small class="text-danger"><?= $email_err; ?></small>
+            </div>
+
+            <div class="col-lg-6 mb-3">
+              <label for="course" class="form-label">Course</label>
+              <input type="text" name="course" class="form-control" id="course" value="<?= $course; ?>">
+              <small class="text-danger"><?= $course_err; ?></small>
+            </div>
+
+            <div class="col-lg-6 mb-3">
+              <label for="batch" class="form-label">Batch</label>
+              <input type="number" name="batch" class="form-control" id="batch" value="<?= $batch; ?>">
+              <small class="text-danger"><?= $batch_err; ?></small>
+            </div>
+
+            <div class="col-lg-6 mb-3">
+              <label for="city" class="form-label">City</label>
+              <input type="text" name="city" class="form-control" id="city" value="<?= $city; ?>">
+              <small class="text-danger"><?= $city_err; ?></small>
+            </div>
+
+            <div class="col-lg-6 mb-3">
+              <label for="state" class="form-label">State</label>
+              <input type="text" name="state" class="form-control" id="state" value="<?= $state; ?>">
+              <small class="text-danger"><?= $state_err; ?></small>
+            </div>
+
+            <div class="col-lg-12 mt-1">
+              <input type="submit" class="btn btn-primary form-control" value="Create Record">
+            </div>
+          </div>
+        </form>
+        <!-- form end -->
+      </div>
     </div>
+  </div>
 </body>
 
 </html>

@@ -1,20 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap");
 
 body {
-    font-size: 18px;
-    font-family: 'Barlow', sans-serif;
+  color: #555;
+  font-family: "IBM Plex Sans", sans-serif;
 }
 
-table>tbody>tr>td {
-    vertical-align: middle;
-}
-
-.form-control,
 .btn {
-    font-size: 17px;
+  font-weight: 500;
 }
 
-h3 {
-    font-size: 28px;
-    font-weight: 700;
+.form-label {
+  color: #333;
+  font-weight: 600;
 }
