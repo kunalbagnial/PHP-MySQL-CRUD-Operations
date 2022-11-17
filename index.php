@@ -5,93 +5,92 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PHP CRUD Application</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-  <!-- custom css -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.1/font/bootstrap-icons.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+  <link rel="stylesheet" href="./style.css">
+  <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
+  <title>PHP CRUD Operations</title>
 </head>
 
 <body>
   <div class="container">
-    <a href="create.php" class="btn btn-secondary my-4">
-      <i class="bi bi-plus-circle"></i> Add Record
-    </a>
+    <div class="py-4">
+      <a href="./create.php" class="btn btn-secondary">
+        <i class="bi bi-plus-circle-fill"></i> Add Employee
+      </a>
+    </div>
+
+    <!-- Table starts here -->
     <table class="table table-bordered table-striped align-middle">
       <thead>
         <tr>
           <th>#</th>
-          <th>Firstname</th>
-          <th>Lastname</th>
+          <th>First Name</th>
+          <th>Last Name</th>
           <th>Email Address</th>
-          <th>Course</th>
-          <th>Batch</th>
-          <th>City</th>
-          <th>State</th>
-          <th>Actions</th>
+          <th>Age</th>
+          <th>Gender</th>
+          <th>Role</th>
+          <th>Joining Date</th>
+          <th>Action</th>
         </tr>
       </thead>
-
       <tbody>
         <?php
-        // Include config file
-        require_once "config.php";
+        # Include connection
+        require_once "./config.php";
 
-        $sql = "SELECT * FROM students";
+        # Attempt select query execution
+        $sql = "SELECT * FROM employees";
 
         if ($result = mysqli_query($link, $sql)) {
           if (mysqli_num_rows($result) > 0) {
-            // Fetch the records
             $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
             $count = 1;
             foreach ($rows as $row) { ?>
               <tr>
-                <td><?= $count++; ?>.</td>
-                <td><?= ucfirst($row["firstname"]); ?></td>
-                <td><?= ucfirst($row["lastname"]); ?></td>
+                <td><?= $count++; ?></td>
+                <td><?= $row["first_name"]; ?></td>
+                <td><?= $row["last_name"]; ?></td>
                 <td><?= $row["email"]; ?></td>
-                <td><?= strtoupper($row["course"]); ?></td>
-                <td><?= $row["batch"]; ?></td>
-                <td><?= ucfirst($row["city"]); ?></td>
-                <td><?= ucwords($row["state"]); ?></td>
+                <td><?= $row["age"]; ?></td>
+                <td><?= $row["gender"]; ?></td>
+                <td><?= $row["designation"]; ?></td>
+                <td><?= $row["joining_date"]; ?></td>
                 <td>
-                  <a href="read.php?id=<?= $row["id"]; ?>" class="btn btn-info btn-sm">
-                    <i class="bi bi-eye-fill"></i>
-                  </a>&nbsp;
-                  <a href="update.php?id=<?= $row["id"]; ?>" class="btn btn-primary btn-sm">
+                  <a href="./update.php?id=<?= $row["id"]; ?>" class="btn btn-primary btn-sm">
                     <i class="bi bi-pencil-square"></i>
                   </a>&nbsp;
-                  <a href="delete.php?id=<?= $row["id"]; ?>" class="btn btn-danger btn-sm">
-                    <i class="bi bi-trash"></i>
+                  <a href="./delete.php?id=<?= $row["id"]; ?>" class="btn btn-danger btn-sm">
+                    <i class="bi bi-trash-fill"></i>
                   </a>
                 </td>
               </tr>
             <?php
             }
+            # Free result set
+            mysqli_free_result($result);
           } else { ?>
             <tr>
-              <td class="text-center text-danger fw-bold" colspan="9">* No Record Found *</td>
+              <td class="text-center text-danger fw-bold" colspan="9">** No records were found **</td>
             </tr>
         <?php
           }
-        } else {
-          echo "<script>alert('Oops! Something went wrong. Please try again later.');</script>";
         }
-        // Close conection 
+        # Close connection
         mysqli_close($link);
         ?>
       </tbody>
     </table>
   </div>
 
-  <!-- custom js -->
   <script>
     const delBtnEl = document.querySelectorAll(".btn-danger");
     delBtnEl.forEach(function(delBtn) {
-      delBtn.addEventListener("click", function(event) {
+      delBtn.addEventListener("click", function(e) {
         const message = confirm("Are you sure you want to delete this record?");
         if (message == false) {
-          event.preventDefault();
+          e.preventDefault();
         }
       });
     });

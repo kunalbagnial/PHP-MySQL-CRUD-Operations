@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 03, 2022 at 11:40 AM
+-- Generation Time: Nov 17, 2022 at 01:52 PM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.1.2
 
@@ -24,45 +24,44 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `students`
+-- Table structure for table `employees`
 --
 
-CREATE TABLE `students` (
-  `id` int(6) NOT NULL,
-  `firstname` varchar(30) NOT NULL,
-  `lastname` varchar(30) NOT NULL,
-  `email` varchar(70) NOT NULL,
-  `course` varchar(30) NOT NULL,
-  `batch` int(4) NOT NULL,
-  `city` varchar(30) NOT NULL,
-  `state` varchar(30) NOT NULL,
-  `creation_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+CREATE TABLE `employees` (
+  `id` int(11) NOT NULL,
+  `first_name` varchar(30) NOT NULL,
+  `last_name` varchar(30) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `age` int(11) NOT NULL,
+  `gender` varchar(10) NOT NULL,
+  `designation` varchar(20) NOT NULL,
+  `joining_date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `students`
+-- Dumping data for table `employees`
 --
 
-INSERT INTO `students` (`id`, `firstname`, `lastname`, `email`, `course`, `batch`, `city`, `state`, `creation_date`) VALUES
-(1, 'ashish', 'sharma', 'as_123@gmail.com', 'pgdca', 2013, 'ludhiana', 'punjab', '2022-03-11 11:04:37'),
-(2, 'abhinav', 'kohli', 'abhinavk94@gmail.com', 'bca', 2014, 'dehradun', 'uttarakhand', '2022-02-26 07:08:18'),
-(3, 'anjali', 'thakur', 'at123@gmail.com', 'mca', 2015, 'ambala', 'haryana', '2022-02-27 07:06:34'),
-(4, 'aditi', 'goyal', 'aditi.xyz@gmail.com', 'bca', 2016, 'mohali', 'punjab', '2022-02-28 12:09:01'),
-(5, 'keshav', 'kumar', 'kk123@gmail.com', 'mca', 2016, 'patna', 'bihar', '2022-02-28 12:10:42'),
-(12, 'shweta', 'jain', 'sj.11293@yahoo.com', 'bca', 2017, 'shimla', 'himachal pradesh', '2022-03-13 09:28:25'),
-(13, 'praveen', 'kumar', 'pv.94@yahoo.com', 'mca', 2017, 'patna', 'bihar', '2022-03-07 12:55:28'),
-(14, 'suraj', 'chaudhary', 'sc.xyz@gmail.com', 'mca', 2018, 'sonipat', 'haryana', '2022-03-08 10:59:40'),
-(19, 'ranjita', 'kumari', 'rk.9796@gmail.com', 'pdgca', 2019, 'patiala', 'punjab', '2022-03-12 08:14:34'),
-(20, 'jagdeep', 'singh', 'js_xyz@gmail.com', 'bca', 2020, 'ludhiana', 'punjab', '2022-03-12 13:12:55');
+INSERT INTO `employees` (`id`, `first_name`, `last_name`, `email`, `age`, `gender`, `designation`, `joining_date`) VALUES
+(9, 'Jimmy', 'Powell', 'jp.me@test.com', 29, 'Male', 'PHP Developer', '2022-09-24'),
+(10, 'John', 'Doe', 'john.doe@test.com', 31, 'Male', 'UI Designer', '2022-08-06'),
+(11, 'Phillip', 'Johnson', 'pj.123@test.com', 34, 'Male', 'Android Developer', '2022-11-04'),
+(12, 'Melissa', 'Butler', 'mel.buttler@test.com', 26, 'Female', 'UI Designer', '2022-11-13'),
+(13, 'Sara', 'Griffin', 'sara.griffin@test.com', 28, 'Female', 'Android Developer', '2022-08-31'),
+(14, 'Kelly', 'Martin', 'k.martin@test.com', 27, 'Female', 'Frontend Developer', '2022-05-29'),
+(15, 'Avinash', 'Sharma', 'av.sharma@test.com', 34, 'Male', 'PHP Developer', '2022-11-12'),
+(16, 'Nidhi', 'Aggarwal', 'na.me@test.com', 31, 'Female', 'Frontend Developer', '2022-11-04'),
+(17, 'Charles', 'Lee', 'charles.lee@test.com', 33, 'Male', 'Android Developer', '2022-09-10'),
+(18, 'Martin', 'Wood', 'martin.wood@test.com', 37, 'Others', 'UI Designer', '2021-12-04');
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `students`
+-- Indexes for table `employees`
 --
-ALTER TABLE `students`
+ALTER TABLE `employees`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -70,10 +69,10 @@ ALTER TABLE `students`
 --
 
 --
--- AUTO_INCREMENT for table `students`
+-- AUTO_INCREMENT for table `employees`
 --
-ALTER TABLE `students`
-  MODIFY `id` int(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+ALTER TABLE `employees`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

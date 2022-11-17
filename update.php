@@ -1,136 +1,154 @@
 <?php
-include "config.php";
+# Include connection
+require_once "./config.php";
 
-// Define variables and initialize with empty values
-$fname_err = $lname_err = $email_err = $course_err = $batch_err = $city_err = $state_err = "";
-$firstname = $lastname = $email = $course = $batch = $city = $state = "";
+# Define variables and initialize with empty values
+$fname_err = $lname_err = $email_err = $age_err = $gender_err = $designation_err = $date_err = "";
+$fname = $lname = $email = $age = $gender = $designation = "";
 
-// Process update operation when form is submit
+# Processing form data when form is submitted
 if (isset($_POST["id"]) && !empty($_POST["id"])) {
-  // Get post id
+  # Get hidden input value
   $id = $_POST["id"];
 
-  if (empty($_POST["fname"])) {
-    $fname_err = "*this field is required";
+  if (empty(trim($_POST["fname"]))) {
+    $fname_err = "This field is required.";
   } else {
-    $firstname = trim($_POST["fname"]);
-    if (!ctype_alpha($firstname)) {
-      $fname_err = "Only letters are allowed";
+    $fname = ucfirst(trim($_POST["fname"]));
+    if (!ctype_alpha($fname)) {
+      $fname_err = "Invalid name format.";
     }
   }
 
-  if (empty($_POST["lname"])) {
-    $lname_err = "*This field is required";
+  if (empty(trim($_POST["lname"]))) {
+    $lname_err = "This field is required.";
   } else {
-    $lastname = trim($_POST["lname"]);
-    if (!ctype_alpha($lastname)) {
-      $lname_err = "Only letters are allowed";
+    $lname = ucfirst(trim($_POST["lname"]));
+    if (!ctype_alpha($lname)) {
+      $lname_err = "Invalid name format.";
     }
   }
 
-  if (empty($_POST["email"])) {
-    $email_err = "*This field is required";
+  if (empty(trim($_POST["email"]))) {
+    $email_err = "This field is required.";
   } else {
     $email = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-      $email_err = "*Please enter a valid email address";
+      $email_err = "Please enter a valid email address.";
     }
   }
 
-  if (empty($_POST["course"])) {
-    $course_err = "*This field is required";
+  if (empty(trim($_POST["age"]))) {
+    $age_err = "This field is required.";
   } else {
-    $course = trim($_POST["course"]);
+    $age = trim($_POST["age"]);
+    if (!ctype_digit($age)) {
+      $age_err = "Please enter a valid age number";
+    }
   }
 
-  if (empty($_POST["batch"])) {
-    $batch_err = "*This field is required";
+  if (empty($_POST["gender"])) {
+    $gender_err = "This field is required.";
   } else {
-    $batch = trim($_POST["batch"]);
+    $gender = $_POST["gender"];
   }
 
-  if (empty($_POST["city"])) {
-    $city_err = "*This field is required";
+  if (empty($_POST["designation"])) {
+    $designation_err = "This field is required.";
   } else {
-    $city = trim($_POST["city"]);
+    $designation = $_POST["designation"];
   }
 
-  if (empty($_POST["state"])) {
-    $state_err = "*This field is required";
+  if (empty($_POST["date"])) {
+    $date_err = "This field is required";
   } else {
-    $state = trim($_POST["state"]);
+    $date = $_POST["date"];
   }
 
-  // Check input errors before updating record
-  if (empty($fname_err) && empty($lname_err) && empty($email_err) && empty($course_err) && empty($batch_err) && empty($city_err) && empty($state_err)) {
-
-    // Prepare a update statement
-    $sql = "UPDATE students SET firstname = ?, lastname = ?, email = ?, course = ?, batch = ?, city = ?, state = ? WHERE id = ? ";
+  # Check input errors before updating data from database
+  if (empty($fname_err) && empty($lname_err) && empty($email_err) && empty($age_err) && empty($gender_err) && empty($designation_err) && empty($date_err)) {
+    # Preapre an update statement
+    $sql = "UPDATE employees SET first_name = ?, last_name = ?, email = ?, age = ?, gender = ?, designation = ?, joining_date = ? WHERE id = ?";
 
     if ($stmt = mysqli_prepare($link, $sql)) {
-      // Bind variables to the statement as parameters
-      mysqli_stmt_bind_param($stmt, "ssssissi", $firstname, $lastname, $email, $course, $batch, $city, $state, $id);
+      # Bind variables to the prepared statement as parameters
+      mysqli_stmt_bind_param($stmt, "sssisssi", $param_fname, $param_lname, $param_email, $param_age, $param_gender, $param_designation, $param_date, $param_id);
 
-      // Execute the statement
+      # Set parameters
+      $param_fname = $fname;
+      $param_lname = $lname;
+      $param_email = $email;
+      $param_age = $age;
+      $param_gender = $gender;
+      $param_designation = $designation;
+      $param_date = $date;
+      $param_id = $id;
+
+      # Execute the statement
       if (mysqli_stmt_execute($stmt)) {
-        echo "<script>alert('Record updated successfully');</script>";
-        echo "<script>window.location.href='http://localhost/php_crud/';</script>";
+        echo "<script>" . "alert('Record has been updated successfully.');" . "</script>";
+        echo "<script>" . "window.location.href='./'" . "</script>";
         exit;
-      } else {
-        echo "Oops, Something went wrong. Please try again later.";
-      }
-    }
-    // Close statement
-    mysqli_stmt_close($stmt);
-  }
-  // Close connection
-  mysqli_close($link);
-} else {
-  // Check if url contains id parameter
-  if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
-    // Get id from url
-    $id = trim($_GET["id"]);
-
-    // Prepare a select statement
-    $sql = "SELECT * FROM students WHERE id = ?";
-
-    if ($stmt = mysqli_prepare($link, $sql)) {
-      // Bind variable to a statement as parameter
-      mysqli_stmt_bind_param($stmt, "i", $id);
-
-      // Execute the statement
-      if (mysqli_stmt_execute($stmt)) {
-        $result = mysqli_stmt_get_result($stmt);
-
-        if (mysqli_num_rows($result) == 1) {
-          // Fetch the record
-          $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
-
-          // Retrieve individual field value
-          $firstname =  $row["firstname"];
-          $lastname =  $row["lastname"];
-          $email =  $row["email"];
-          $course =  $row["course"];
-          $batch =  $row["batch"];
-          $city =  $row["city"];
-          $state =  $row["state"];
-        } else {
-          // Redirect id url doesn't contain valid id parameter
-          echo "<script>window.location.href='http://localhost/php_crud/';</script>";
-          exit;
-        }
       } else {
         echo "Oops! Something went wrong. Please try again later.";
       }
     }
-    // Close statement
+
+    # Close statement
+    mysqli_stmt_close($stmt);
+  }
+
+  # Close connection
+  mysqli_close($link);
+} else {
+  # Check if URL contains id parameter before processing further
+  if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
+    # Get URL paramater
+    $id = trim($_GET["id"]);
+
+    # Prepare a select statement
+    $sql = "SELECT * FROM employees WHERE id = ?";
+
+    if ($stmt = mysqli_prepare($link, $sql)) {
+      # Bind variables to the prepared statement as parameters
+      mysqli_stmt_bind_param($stmt, "i", $param_id);
+
+      # Set Parameters
+      $param_id = $id;
+
+      # Execute the statement
+      if (mysqli_stmt_execute($stmt)) {
+        $result = mysqli_stmt_get_result($stmt);
+
+        if (mysqli_num_rows($result) == 1) {
+          # Fetch result row as an associative array
+          $row = mysqli_fetch_array($result);
+
+          # Retrieve individual field value
+          $fname = $row["first_name"];
+          $lname = $row["last_name"];
+          $email = $row["email"];
+          $age = $row["age"];
+          $gender = $row["gender"];
+          $designation = $row["designation"];
+          $date = $row["joining_date"];
+        } else {
+          # URL doesn't contain valid id parameter. Redirect to index page
+          echo "<script>" . "window.location.href='./'" . "</script>";
+          exit;
+        }
+      } else {
+        echo "Oops! Something went wrong. Please try again later";
+      }
+    }
+    # Close statement
     mysqli_stmt_close($stmt);
 
-    // Close connection
+    # Close connection
     mysqli_close($link);
   } else {
-    // Redirect if url doesn't contain id parameter
-    echo "<script>window.location.href='http://localhost/php_crud/';</script>";
+    # Redirect to index.php if URL doesn't contain id parameter
+    echo "<script>" . "window.location.href='./'" . "</script>";
     exit;
   }
 }
@@ -143,71 +161,81 @@ if (isset($_POST["id"]) && !empty($_POST["id"])) {
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Update Data - PHP CRUD</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-  <!-- custom css -->
-  <link rel="stylesheet" href="style.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+  <link rel="stylesheet" href="./style.css">
+  <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
+  <title>PHP CRUD Operations</title>
 </head>
 
 <body>
   <div class="container">
-    <div class="row justify-content-center pt-5">
+    <div class="row justify-content-center mt-5">
       <div class="col-lg-6">
-        <!-- form start -->
-        <form action="<?= htmlspecialchars(basename($_SERVER["REQUEST_URI"])); ?>" method="post" class="bg-light p-4 shadow-sm" novalidate>
-          <div class="row">
-            <div class="col-lg-6 mb-3">
-              <label for="fname" class="form-label">Firstname</label>
-              <input type="text" name="fname" class="form-control" id="fname" value="<?= $firstname; ?>">
+        <!-- form starts here -->
+        <form action="<?= htmlspecialchars(basename($_SERVER["REQUEST_URI"]));  ?>" class="bg-light p-4 shadow-sm" method="post" novalidate>
+          <div class="row gy-3">
+            <div class="col-lg-6">
+              <label for="fname" class="form-label">First Name</label>
+              <input type="text" class="form-control" name="fname" id="fname" value="<?= $fname; ?>">
               <small class="text-danger"><?= $fname_err; ?></small>
             </div>
-
-            <div class="col-lg-6 mb-3">
-              <label for="lname" class="form-label">Lastname</label>
-              <input type="text" name="lname" class="form-control" id="lname" value="<?= $lastname; ?>">
+            <div class="col-lg-6">
+              <label for="lname" class="form-label">Last Name</label>
+              <input type="text" class="form-control" name="lname" id="lname" value="<?= $lname; ?>">
               <small class="text-danger"><?= $lname_err; ?></small>
             </div>
-
-            <div class="col-lg-12 mb-3">
+            <div class="col-lg-12">
               <label for="email" class="form-label">Email Address</label>
-              <input type="email" name="email" class="form-control" id="email" value="<?= $email; ?>">
+              <input type="email" class="form-control" name="email" id="email" value="<?= $email; ?>">
               <small class="text-danger"><?= $email_err; ?></small>
             </div>
-
-            <div class="col-lg-6 mb-3">
-              <label for="course" class="form-label">Course</label>
-              <input type="text" name="course" class="form-control" id="course" value="<?= $course; ?>">
-              <small class="text-danger"><?= $course_err; ?></small>
+            <div class="col-lg-6">
+              <label for="age" class="form-label">Age</label>
+              <input type="text" class="form-control" name="age" id="age" value="<?= $age; ?>">
+              <small class="text-danger"><?= $age_err; ?></small>
             </div>
-
-            <div class="col-lg-6 mb-3">
-              <label for="batch" class="form-label">Batch</label>
-              <input type="number" name="batch" class="form-control" id="batch" value="<?= $batch; ?>">
-              <small class="text-danger"><?= $batch_err; ?></small>
+            <div class="col-lg-6">
+              <label for="gender" class="form-label">Gender</label>
+              <select name="gender" class="form-select" id="gender">
+                <option selected disabled>Select Gender</option>
+                <option value="Male" <?= (isset($gender) && $gender == "Male") ? "selected" : ""; ?>>Male</option>
+                <option value="Female" <?= (isset($gender) && $gender == "Female") ? "selected" : ""; ?>>Female</option>
+                <option value="Others" <?= (isset($gender) && $gender == "Others") ? "selected" : ""; ?>>Others</option>
+              </select>
+              <small class="text-danger"><?= $gender_err; ?></small>
             </div>
-
-            <div class="col-lg-6 mb-3">
-              <label for="city" class="form-label">City</label>
-              <input type="text" name="city" class="form-control" id="city" value="<?= $city; ?>">
-              <small class="text-danger"><?= $city_err; ?></small>
+            <div class="col-lg-6">
+              <label for="designation" class="form-label">Designation</label>
+              <select name="designation" class="form-select" id="designation">
+                <option selected disabled>Select Designation</option>
+                <option value="UI Designer" <?= (isset($designation) && $designation == "UI Designer") ? "selected" : ""; ?>>
+                  UI Designer
+                </option>
+                <option value="Frontend Developer" <?= (isset($designation) && $designation == "Frontend Developer") ? "selected" : ""; ?>>
+                  Frontend Developer
+                </option>
+                <option value="PHP Developer" <?= (isset($designation) && $designation == "PHP Developer") ? "selected" : ""; ?>>
+                  PHP Developer
+                </option>
+                <option value="Android Developer" <?= (isset($designation) && $designation == "Android Developer") ? "selected" : ""; ?>>
+                  Android Developer
+                </option>
+              </select>
+              <small class="text-danger"><?= $designation_err; ?></small>
             </div>
-
-            <div class="col-lg-6 mb-3">
-              <label for="state" class="form-label">State</label>
-              <input type="text" name="state" class="form-control" id="state" value="<?= $state; ?>">
-              <small class="text-danger"><?= $state_err; ?></small>
+            <div class="col-lg-6">
+              <label for="date" class="form-label">Joining Date</label>
+              <input type="date" class="form-control" name="date" id="date" value="<?= $date; ?>">
+              <small class="text-danger"><?= $date_err; ?></small>
             </div>
-
-            <div class="col-lg-12 mt-1">
-              <input type="hidden" name="id" class="form-control" value="<?= $id; ?>">
-              <input type="submit" class="btn btn-secondary btn-block w-100" value="Update Record">
+            <div class="col-lg-12 d-grid">
+              <input type="hidden" class="form-control" name="id" value="<?= $id; ?>">
+              <button type="submit" class="btn btn-primary">Update Employee</button>
             </div>
           </div>
         </form>
-        <!-- form end -->
+        <!-- form ends here -->
       </div>
     </div>
   </div>
 </body>
-
-</html>

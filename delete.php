@@ -1,34 +1,39 @@
 <?php
-require_once "config.php";
-
-// Process delete operation if url contains id parameter
+# Process delete operation only if URL contain id parameter
 if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
-  // Get id from url
+  # Include connection
+  require_once "./config.php";
+
+  # Get URL parameter
   $id = trim($_GET["id"]);
 
-  // Prepare a delete statment
-  $sql = "DELETE FROM students WHERE id = ?";
+  # Prepare a delete statement
+  $sql = "DELETE FROM employees WHERE id = ?";
 
   if ($stmt = mysqli_prepare($link, $sql)) {
-    // Bind varibale to the statement as parameter
-    mysqli_stmt_bind_param($stmt, "i", $id);
+    # Bind variables to the prepared statement as parameters
+    mysqli_stmt_bind_param($stmt, "i", $param_id);
 
-    // Execute the statement
+    # Set parameters
+    $param_id = $id;
+
+    # Execute the statement
     if (mysqli_stmt_execute($stmt)) {
-      echo "<script>alert('Record deleted successfully');</script>";
-      echo "<script>window.location.href='http://localhost/php_crud/';</script>";
+      echo "<script>" . "alert('Record has been deleted successfully.');" . "</script>";
+      echo "<script>" . "window.location.href='./'" . "</script>";
       exit;
     } else {
-      echo "Oops something went wrong. Please try again later";
+      echo "Oops ! Something went wrong. Please try again later.";
     }
   }
-  // Close statement
+
+  # close statement
   mysqli_stmt_close($stmt);
 
-  // close connection
+  # Close connection
   mysqli_close($link);
 } else {
-  // Redirect if url doesn't contain id parameter
-  echo "<script>window.location.href='http://localhost/php_crud/';</script>";
+  # Redirect to index page if URL doesn't contain id parameter
+  echo "<script>" . "window.location.href='./'" . "</script>";
   exit;
 }
