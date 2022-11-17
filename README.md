@@ -1,15 +1,14 @@
-## PHP-MySQL-CRUD
+## PHP-MySQL-CRUD-Operations
 
-> PHP-MySQL CRUD operations using MySQLi (Procedural style).
+> Create, Read, Update and Delete operations in PHP and MySQL.
 
 ### Project Demo
 
-Live Project URL- [PHP-MySQL-CRUD](https://live-demo2.000webhostapp.com/)
+Live Project URL- [PHP-MySQL-CRUD-Operations](https://live-demo09.000webhostapp.com/)
 
 ### Screenshots
 
-![screenshot](screenshots/read-1.png)
-![screenshot](screenshots/read-2.png)
-![screenshot](screenshots/create-1.png)
-![screenshot](screenshots/create-2.png)
-![screenshot](screenshots/update.png)
+![screenshot](screenshots/screenshot_1.png)
+![screenshot](screenshots/screenshot_2.png)
+![screenshot](screenshots/screenshot_3.png)
+![screenshot](screenshots/screenshot_4.png)
